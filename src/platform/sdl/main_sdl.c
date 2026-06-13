@@ -85,6 +85,7 @@ typedef struct {
     SDL_AudioDeviceID adev;
     sr_audio *audio;
     int cur_song;
+    bool audio_enabled;        /* cached, follows cfg.sound_off */
     sr_game game;
     sr_input input;
     sr_input touch;           /* touch-derived input, OR-ed with keyboard */
@@ -356,6 +357,17 @@ static void apply_audio(app_t *a)
 {
     if (!a->adev)
         return;
+    /* honor the Settings "Sound Off" toggle — the menu writes cfg.sound_off but
+     * nothing was muting the OPL output; sync it here on change. */
+    bool want_enabled = !a->game.cfg.sound_off;
+    if (want_enabled != a->audio_enabled) {
+        SDL_LockAudioDevice(a->adev);
+        sr_audio_set_enabled(a->audio, want_enabled);
+        a->audio_enabled = want_enabled;
+        if (want_enabled)
+            a->cur_song = -1;      /* force the current track to restart */
+        SDL_UnlockAudioDevice(a->adev);
+    }
     if (a->game.want_song != a->cur_song || a->game.sfx_request ||
         a->game.want_intro_snd) {
         SDL_LockAudioDevice(a->adev);
@@ -483,6 +495,7 @@ int main(int argc, char **argv)
     }
     a->audio = sr_audio_create();
     a->cur_song = -1;
+    a->audio_enabled = true;       /* matches sr_audio_create default */
     SDL_AudioSpec want, have;
     SDL_zero(want);
     want.freq = SR_AUDIO_RATE;
