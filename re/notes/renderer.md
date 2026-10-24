@@ -432,7 +432,7 @@ TREKDAT (§4.4).
 ### 7.3 Shadow (VGA 0x33e1, called from ship draw @0x329d)
 
 - `map = clearance/5`; ≥5 → no shadow (0x33e7-0x33f2). Shape = 261 bytes
-  (29x9, column-major like the ship) at **ds:0x65e + map*0x105** — 5 baked
+  (29x9, row-major) at **ds:0x65e + map*0x105** — 5 baked
   ship-silhouette shadow maps, shrinking with height (156/106/58/28/12 pixels).
 - Position: `y = (0x9d - alt) + 0x10 + clearance`, x = ship rect x; offset
   saved to `[0xe7c]` (0x33fe-0x341a).
