@@ -305,8 +305,13 @@ depending on `[0xe54]`, computed at e.g. 0x2e61-0x2e6e):
   skip front record, draw side if inner neighbor shape < 2 (0x2f50-0x2f6a);
   upper tier (kind 5): front patched (0x2f6f-0x2f7e), side if neighbor
   shape < 4 else skip (0x2f83-0x2fa1), extra record if nearer shape < 4 (0x2fa4-0x2faa).
-- **0x2fb0 (tunneled high block)**: combination of 0x2ee1 + 0x2f3c upper tier
-  (entrance 0x41 @0x2fbc, arch via kind-4-like fills, upper tier kind 5).
+- **0x2fb0 (tunneled high block)**: combination of 0x2ee1 + 0x2f3c upper tier:
+  floor; entrance (kind 1, 0x41 @0x2fbc) if nearer shape < 2; kind 2: skip
+  front record, side if inner neighbor shape < 2 (0x2fc4-0x2fe1); if nearer
+  shape < 2: kind-3 chain with first record skipped, draw records 1+2 (top
+  split around the arch, as 0x2ee1) (0x2fe6-0x2ff7); upper tier (kind 5) as
+  0x2f3c (0x2ffc-0x303c). No kind-4 (arch gradient) fills here: those belong
+  to 0x303d only.
 
 The "nearer row / inner neighbor" tests are painter's-algorithm occlusion
 shortcuts: faces that the (drawn-later) nearer/inner geometry would fully

@@ -237,9 +237,12 @@ static void compose_tun_high(compctx *cc)      /* 0x2fb0 */
     skip_record(&cc->f);
     if (shape(cc->inner) < 2)
         fill_record(&cc->f, cc->half, 0);
-    seek_kind(cc, 4);
-    for (int i = 0; i < 6; i++)
+    if (shape(cc->nearer) < 2) {                            /* 0x2fe6 */
+        seek_kind(cc, 3);
+        skip_record(&cc->f);                                /* plain top */
+        fill_record(&cc->f, cc->half, 0);                   /* split tops */
         fill_record(&cc->f, cc->half, 0);
+    }
     seek_kind(cc, 5);
     fill_record(&cc->f, cc->half, blockcolor(cc->tile));
     if (shape(cc->inner) < 4)
